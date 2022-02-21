@@ -1,0 +1,52 @@
+<resources>
+    <!-- positions -->
+    <string-array name="positionsArray">
+        <item> N/A </item>
+        <item> Internship </item>
+        <item> Mobile Developer </item>
+        <item> Web Developer </item>
+        <item> AI Engineer </item>
+        <item> BlockChain Developer </item>
+        <item> Data Scientist </item>
+        <item> Unity Developer </item>
+    </string-array>
+
+    <!-- salary -->
+    <string-array name="salariesArray">
+        <item> N/A </item>
+        <item> 500–1000 USD </item>
+        <item> 1000–1500 USD </item>
+        <item> 1500–2000 USD </item>
+        <item> Above 2000 USD </item>
+    </string-array>
+
+    <!-- labels -->
+    <string name="app_name">Jobs Search</string>
+    <string name="position">Position</string>
+    <string name="name">Name</string>
+    <string name="search_employees">Search employees…</string>
+    <string name="home_hint">Find your perfect employee</string>
+    <string name="welcome_again">Welcome again!</string>
+    <string name="role">Role</string>
+    <string name="save_new_data">Save New Data</string>
+    <string name="description">Description</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="jobs_search">Jobs Search</string>
+    <string name="create_new_account">Create New Account</string>
+    <string name="authenticating">Authenticating…</string>
+    <string name="grab_a_cup_of_coffee">Grab a cup of coffee</string>
+    <string name="user_not_found">User not found</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="field_required">This field is required</string>
+    <string name="email_not_valid">Email not valid.</string>
+    <string name="password_short">Password must be at least 8 characters.</string>
+    <string name="employer">Employer</string>
+    <string name="employee">Employee</string>
+    <string name="company_name">Company Name</string>
+</resources>

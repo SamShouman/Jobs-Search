@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "820970624508",
+    "project_id": "jobs-search-14890",
+    "storage_bucket": "jobs-search-14890.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820970624508:android:076348aaaee9d6f86d8e79",
+        "android_client_info": {
+          "package_name": "com.samdroid.jobssearch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820970624508-tkoqusrklkvj7diot9u0bagf1ctgmj82.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhSRxFjRNxta18WTFelZOrOL3BYYwNi80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820970624508-tkoqusrklkvj7diot9u0bagf1ctgmj82.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
