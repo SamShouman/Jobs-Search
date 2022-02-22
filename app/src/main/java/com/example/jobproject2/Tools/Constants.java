@@ -9,4 +9,7 @@ public class Constants {
 
     public static final String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     public static final String NODE_USERS = "users";
+
+    public static final String EMAIL_SENDER = "mal3ab.app@gmail.com";
+    public static final String EMAIL_PASSWORD = "chouman789";
 }

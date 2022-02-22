@@ -1,8 +1,11 @@
 package com.example.jobproject2.Logic;
 
+import android.content.Context;
+
 import com.example.jobproject2.Interfaces.IEmployeeHomeFirebaseCallback;
 import com.example.jobproject2.Models.User;
 import com.example.jobproject2.Tools.Constants;
+import com.example.jobproject2.Tools.SharedPreferencesManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -10,6 +13,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import papaya.in.sendmail.SendMail;
 
 public class EmployerHomeLogic {
     private IEmployeeHomeFirebaseCallback callback;
@@ -77,5 +82,16 @@ public class EmployerHomeLogic {
 
     public void setCallback(IEmployeeHomeFirebaseCallback callback) {
         this.callback = callback;
+    }
+
+    public void sendEmail(Context context, User employee) {
+        String companyName = SharedPreferencesManager.getCompanyName(context);
+
+        SendMail mail = new SendMail(Constants.EMAIL_SENDER, Constants.EMAIL_PASSWORD,
+                employee.getEmail(),
+                "Jobs Search Profile View",
+                "Hello " + employee.getName() + ", " + "a recruiter from " + companyName + " viewed your profile.");
+
+        mail.execute();
     }
 }

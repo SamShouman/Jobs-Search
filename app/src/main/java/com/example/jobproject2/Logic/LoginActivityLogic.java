@@ -48,7 +48,7 @@ public class LoginActivityLogic extends BasicLogic{
     }
 
     private void getUserIdByEmail(String email, String password, Map<String, Object> users) {
-        String userId = "", role = "", name = "", phoneNb = "";
+        String userId = "", role = "", name = "", phoneNb = "", companyName = "";
         for (Map.Entry<String, Object> entry : users.entrySet()) {
             Map user = (Map) entry.getValue();
 
@@ -57,6 +57,7 @@ public class LoginActivityLogic extends BasicLogic{
                 userId = (String) user.get("userId");
                 name = (String) user.get("name");
                 phoneNb = (String) user.get("mobileNb");
+                companyName = (String) user.get("companyName");
                 break;
             }
         }
@@ -69,6 +70,7 @@ public class LoginActivityLogic extends BasicLogic{
             SharedPreferencesManager.setName(context, name);
             SharedPreferencesManager.setPhoneNb(context, phoneNb);
             SharedPreferencesManager.setRole(context, role);
+            SharedPreferencesManager.setCompanyName(context, companyName);
             loginActivityCallbacks.onLoginSuccess(role);
         }
     }

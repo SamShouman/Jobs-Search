@@ -110,6 +110,8 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
         i.putExtra("position", employee.getPosition());
 
         startActivity(i);
+
+        mLogic.sendEmail(getApplicationContext(), employee);
     }
 
     @Override
