@@ -52,7 +52,7 @@ public class LoginActivityLogic extends BasicLogic{
         for (Map.Entry<String, Object> entry : users.entrySet()) {
             Map user = (Map) entry.getValue();
 
-            if (user.get("email").equals(email) && user.get("password").equals(password)) {
+            if (user.get("email").equals(email)) {
                 role = (String) user.get("role");
                 userId = (String) user.get("userId");
                 name = (String) user.get("name");
@@ -71,6 +71,7 @@ public class LoginActivityLogic extends BasicLogic{
             SharedPreferencesManager.setPhoneNb(context, phoneNb);
             SharedPreferencesManager.setRole(context, role);
             SharedPreferencesManager.setCompanyName(context, companyName);
+
             loginActivityCallbacks.onLoginSuccess(role);
         }
     }

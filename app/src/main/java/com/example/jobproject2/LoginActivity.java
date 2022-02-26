@@ -70,6 +70,8 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivityCa
         String email = emailInputEditTxt.getText().toString();
         String password = passwordInputEditTxt.getText().toString();
 
+        // TODO CHECK IF USER ENTERED HIS EMAIL AND PASSWORD
+
         showProgressDialog();
         logic.authenticate(email, password);
     }

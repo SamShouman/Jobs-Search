@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,12 +30,13 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
     private RecyclerView employeesRecV;
     private SearchView searchView;
     private ProgressDialog progressDialog;
+    private Switch myFavSwitch;
     private ImageButton signOutImgBtn;
 
     private DatabaseReference mRef =  FirebaseDatabase.getInstance().getReference();
     private RecyclerView.LayoutManager layoutManager;
     private UsersAdapter adapter;
-    private EmployerHomeLogic mLogic = new EmployerHomeLogic();
+    private EmployerHomeLogic mLogic;
     private ArrayList<User> defaultUsersArrayLst = new ArrayList<>();
 
     @Override
@@ -47,13 +50,14 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
     public void init() {
         employeesRecV = findViewById(R.id.employeesRecV);
         searchView = findViewById(R.id.searchView);
+        myFavSwitch = findViewById(R.id.myFavSwitch);
         signOutImgBtn = findViewById(R.id.signOutImgBtn);
 
         layoutManager = new LinearLayoutManager(this);
 
         showProgressDialog();
 
-        mLogic.setCallback(this);
+        mLogic = new EmployerHomeLogic(this);
         mLogic.getAllUsers(mRef);
 
         setListeners();
@@ -68,6 +72,10 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
     }
 
     public void setListeners() {
+        myFavSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -125,6 +133,11 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
     }
 
     @Override
+    public void onFavImageBtnClicked(User employee) {
+        mLogic.addFavouriteUser(getApplicationContext(), mRef, employee);
+    }
+
+    @Override
     public void onGetAllUsersCallback(ArrayList<User> usersEmployeeArrayLst) {
         defaultUsersArrayLst = usersEmployeeArrayLst;
 
@@ -132,6 +145,11 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
         setUsersRecyclerViewAdapter(usersEmployeeArrayLst);
 
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void onAddFavouriteUserSuccess(boolean isSuccessful) {
+
     }
 
     public void makeTheCall(String phoneNb) {

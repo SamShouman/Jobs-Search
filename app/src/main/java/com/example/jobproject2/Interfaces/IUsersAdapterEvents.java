@@ -6,4 +6,5 @@ public interface IUsersAdapterEvents {
     void onItemClicked(User employee);
     void onEmailImageButtonClicked(User employee);
     void onPhoneImageButtonClicked(User employee);
+    void onFavImageBtnClicked(User employee);
 }

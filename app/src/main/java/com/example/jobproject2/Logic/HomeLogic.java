@@ -70,7 +70,7 @@ public class HomeLogic {
         }
     }
 
-    public void getStatus(DatabaseReference ref, Context ctx) {
+    public void getUserDataFromDb(DatabaseReference ref, Context ctx) {
         ref.child(Constants.FIREBASE_REF_USERS).child(SharedPreferencesManager.getUserId(ctx)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

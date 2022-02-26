@@ -54,28 +54,15 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
         // load profile pictures
         Picasso.with(ctx).load(user.getProfilePicture()).placeholder(R.drawable.user_placeholder).into(holder.employeeCircleImageView);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                events.onItemClicked(user);
-            }
-        });
+        holder.itemView.setOnClickListener(view -> events.onItemClicked(user));
 
-        holder.phoneImgBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                events.onPhoneImageButtonClicked(user);
-            }
-        });
+        holder.phoneImgBtn.setOnClickListener(view -> events.onPhoneImageButtonClicked(user));
 
-        holder.emailImgBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                events.onEmailImageButtonClicked(user);
-            }
-        });
+        holder.emailImgBtn.setOnClickListener(view -> events.onEmailImageButtonClicked(user));
 
-        // TODO SET PROFILE PICTURE
+        holder.favImgBtn.setOnClickListener(view -> {
+            events.onFavImageBtnClicked(user);
+        });
     }
 
     @Override
@@ -90,7 +77,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
     public static class UsersViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView employeeCircleImageView;
         private TextView userNameTxtV, userDescriptionTxtV;
-        private ImageButton emailImgBtn, phoneImgBtn;
+        private ImageButton emailImgBtn, phoneImgBtn, favImgBtn;
 
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,6 +87,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
             userDescriptionTxtV = itemView.findViewById(R.id.userDescriptionTxtV);
             emailImgBtn = itemView.findViewById(R.id.emailImgBtn);
             phoneImgBtn = itemView.findViewById(R.id.phoneImgBtn);
+            favImgBtn = itemView.findViewById(R.id.favImgBtn);
         }
     }
 }

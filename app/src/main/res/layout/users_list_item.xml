@@ -28,10 +28,10 @@
             android:id="@+id/userNameTxtV"
             style="@style/Theme.JobProject2.CardViewText.Title"
             android:layout_width="200dp"
-            android:text="@string/name"
-            android:textStyle="bold"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@string/name"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.026"
@@ -75,8 +75,16 @@
                 android:id="@+id/emailImgBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
                 android:background="@null"
                 android:src="@drawable/ic_email" />
+
+            <ImageButton
+                android:id="@+id/favImgBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/ic_star" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

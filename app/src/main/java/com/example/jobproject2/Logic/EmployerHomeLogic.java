@@ -3,7 +3,9 @@ package com.example.jobproject2.Logic;
 import android.content.Context;
 
 import com.example.jobproject2.Interfaces.IEmployeeHomeFirebaseCallback;
+import com.example.jobproject2.Interfaces.IEmployerHomeEvents;
 import com.example.jobproject2.Models.User;
+import com.example.jobproject2.Repositories.EmployerHomeRepository;
 import com.example.jobproject2.Tools.Constants;
 import com.example.jobproject2.Tools.SharedPreferencesManager;
 import com.google.firebase.database.DataSnapshot;
@@ -16,46 +18,15 @@ import java.util.Map;
 
 import papaya.in.sendmail.SendMail;
 
-public class EmployerHomeLogic {
-    private IEmployeeHomeFirebaseCallback callback;
+public class EmployerHomeLogic implements IEmployerHomeEvents {
+    private EmployerHomeRepository repository = new EmployerHomeRepository();
 
-    public void getAllUsers(DatabaseReference ref) {
-        ref.child(Constants.FIREBASE_REF_USERS).addListenerForSingleValueEvent(
-            new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    collectAllUsers((Map<String,Object>) dataSnapshot.getValue());
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) { callback.onGetAllUsersCallback(new ArrayList<>()); }
-            });
+    public EmployerHomeLogic(IEmployeeHomeFirebaseCallback callback) {
+        repository.setCallback(callback);
     }
 
-    private void collectAllUsers(Map<String, Object> users) {
-        ArrayList<User> usersEmployeeArrayLst = new ArrayList<>();
-
-        for (Map.Entry<String, Object> entry : users.entrySet()){
-            Map user = (Map) entry.getValue();
-
-            if(user.get("role").equals(Constants.ROLE_EMPLOYEE)) {
-                User ue = new User();
-                ue.setEmail((String) user.get("email"));
-                ue.setFirstName((String) user.get("firstName"));
-                ue.setLastName((String) user.get("lastName"));
-                ue.setMobileNb((String) user.get("mobileNb"));
-                ue.setRole((String) user.get("role"));
-                ue.setUserId((String) user.get("userId"));
-                ue.setDescription((String) user.get("description"));
-                ue.setProfilePicture((String) user.get("profilePicture"));
-                ue.setSalary((String) user.get("salary"));
-                ue.setPosition((String) user.get("position"));
-
-                usersEmployeeArrayLst.add(ue);
-            }
-        }
-
-        callback.onGetAllUsersCallback(usersEmployeeArrayLst);
+    public void getAllUsers(DatabaseReference ref) {
+        repository.getAllUsers(ref);
     }
 
     public ArrayList<User> filterList(ArrayList<User> usersArrayList, String newText) {
@@ -80,10 +51,6 @@ public class EmployerHomeLogic {
         return filteredUsersArrayList;
     }
 
-    public void setCallback(IEmployeeHomeFirebaseCallback callback) {
-        this.callback = callback;
-    }
-
     public void sendEmail(Context context, User employee) {
         String companyName = SharedPreferencesManager.getCompanyName(context);
 
@@ -93,5 +60,38 @@ public class EmployerHomeLogic {
                 "Hello " + employee.getName() + ", " + "a recruiter from " + companyName + " viewed your profile.");
 
         mail.execute();
+    }
+
+    public void addFavouriteUser(Context context, DatabaseReference ref, User employee) {
+        String currentUserId = SharedPreferencesManager.getUserId(context);
+
+        repository.addFavouriteUser(ref, employee, currentUserId);
+    }
+
+    @Override
+    public void collectAllUsers(Map<String, Object> users, IEmployeeHomeFirebaseCallback callback) {
+        ArrayList<User> usersEmployeeArrayLst = new ArrayList<>();
+
+        for (Map.Entry<String, Object> entry : users.entrySet()){
+            Map user = (Map) entry.getValue();
+
+            if(user.get("role").equals(Constants.ROLE_EMPLOYEE)) {
+                User ue = new User();
+                ue.setEmail((String) user.get("email"));
+                ue.setFirstName((String) user.get("firstName"));
+                ue.setLastName((String) user.get("lastName"));
+                ue.setMobileNb((String) user.get("mobileNb"));
+                ue.setRole((String) user.get("role"));
+                ue.setUserId((String) user.get("userId"));
+                ue.setDescription((String) user.get("description"));
+                ue.setProfilePicture((String) user.get("profilePicture"));
+                ue.setSalary((String) user.get("salary"));
+                ue.setPosition((String) user.get("position"));
+
+                usersEmployeeArrayLst.add(ue);
+            }
+        }
+
+        callback.onGetAllUsersCallback(usersEmployeeArrayLst);
     }
 }

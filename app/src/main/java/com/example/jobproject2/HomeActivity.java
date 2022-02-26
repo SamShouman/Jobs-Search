@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,8 +30,6 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -144,7 +140,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
 
     private void loadData() {
         mobileNbInputEdtTxt.setText(SharedPreferencesManager.getPhoneNb(getApplicationContext()));
-        mLogic.getStatus(mRef, getApplicationContext());
+        mLogic.getUserDataFromDb(mRef, getApplicationContext());
     }
 
     private void showProgressDialog(String message) {
@@ -227,6 +223,8 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         descriptionInputEdtTxt.setText(userEmployee.getDescription());
 
         loadUserSpinnersData(userEmployee.getSalary(), userEmployee.getPosition());
+
+        // pass the value of profilePicture attribute and the library will handle loading of the image
         Picasso.with(getApplicationContext()).load(userEmployee.getProfilePicture()).placeholder(R.drawable.user_placeholder).into(profilePicImgV);
 
         progressDialog.dismiss();
