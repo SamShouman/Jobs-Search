@@ -50,4 +50,6 @@
     <string name="employee">Employee</string>
     <string name="company_name">Company Name</string>
     <string name="my_favourites">My Favourites</string>
+    <string name="salary">Salary</string>
+    <string name="name_not_valid">Name not valid</string>
 </resources>

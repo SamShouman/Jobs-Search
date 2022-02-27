@@ -23,10 +23,13 @@ public class EmployerHomeLogic implements IEmployerHomeEvents {
 
     public EmployerHomeLogic(IEmployeeHomeFirebaseCallback callback) {
         repository.setCallback(callback);
+        repository.setEvents(this);
     }
 
-    public void getAllUsers(DatabaseReference ref) {
-        repository.getAllUsers(ref);
+    public void getAllUsers(DatabaseReference ref,boolean shouldGetFavourites, Context context) {
+        String userId = SharedPreferencesManager.getUserId(context);
+
+        repository.getAllUsers(ref, shouldGetFavourites, userId);
     }
 
     public ArrayList<User> filterList(ArrayList<User> usersArrayList, String newText) {
@@ -64,7 +67,6 @@ public class EmployerHomeLogic implements IEmployerHomeEvents {
 
     public void addFavouriteUser(Context context, DatabaseReference ref, User employee) {
         String currentUserId = SharedPreferencesManager.getUserId(context);
-
         repository.addFavouriteUser(ref, employee, currentUserId);
     }
 

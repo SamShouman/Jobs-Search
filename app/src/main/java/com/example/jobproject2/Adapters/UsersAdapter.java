@@ -24,10 +24,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
     private ArrayList<User> usersArrayList;
     private Context ctx;
     private IUsersAdapterEvents events;
+    private boolean isLoadingFavourites;
 
-    public UsersAdapter(ArrayList<User> usersArrayList, Context ctx) {
+    public UsersAdapter(ArrayList<User> usersArrayList, Context ctx, boolean isLoadingFavourites) {
         this.usersArrayList = usersArrayList;
         this.ctx = ctx;
+        this.isLoadingFavourites = isLoadingFavourites;
     }
 
     @NonNull
@@ -46,10 +48,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
 
         holder.userNameTxtV.setText(user.getName());
 
-        if(user.getDescription() != null && !user.getDescription().isEmpty())
-            holder.userDescriptionTxtV.setText(user.getDescription());
+        holder.userDescriptionTxtV.setText(user.getPosition());
+
+        if (isLoadingFavourites)
+            holder.favImgBtn.setVisibility(View.GONE);
         else
-            holder.userDescriptionTxtV.setText("No description available");
+            holder.favImgBtn.setVisibility(View.VISIBLE);
 
         // load profile pictures
         Picasso.with(ctx).load(user.getProfilePicture()).placeholder(R.drawable.user_placeholder).into(holder.employeeCircleImageView);

@@ -21,6 +21,7 @@ import com.example.jobproject2.Interfaces.IUsersAdapterEvents;
 import com.example.jobproject2.Logic.EmployerHomeLogic;
 import com.example.jobproject2.Models.User;
 import com.example.jobproject2.Tools.SharedPreferencesManager;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -38,6 +39,7 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
     private UsersAdapter adapter;
     private EmployerHomeLogic mLogic;
     private ArrayList<User> defaultUsersArrayLst = new ArrayList<>();
+    private boolean mIsLoadingFavourites = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
         showProgressDialog();
 
         mLogic = new EmployerHomeLogic(this);
-        mLogic.getAllUsers(mRef);
+        mLogic.getAllUsers(mRef, false, getApplicationContext());
 
         setListeners();
     }
@@ -73,7 +75,9 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
 
     public void setListeners() {
         myFavSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
-
+            mIsLoadingFavourites = b;
+            showProgressDialog();
+            mLogic.getAllUsers(mRef, b, getApplicationContext());
         });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -99,7 +103,7 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
     }
 
     private void setUsersRecyclerViewAdapter(ArrayList<User> newArrayList) {
-        adapter = new UsersAdapter(newArrayList, getApplicationContext());
+        adapter = new UsersAdapter(newArrayList, getApplicationContext(), mIsLoadingFavourites);
         adapter.setEvents(this);
         employeesRecV.setLayoutManager(layoutManager);
         employeesRecV.setAdapter(adapter);
@@ -149,7 +153,12 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
 
     @Override
     public void onAddFavouriteUserSuccess(boolean isSuccessful) {
+        String message = "Employee was added to favourites list successfully";
 
+        if(!isSuccessful)
+            message = "Something went wrong, please try again";
+
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
     public void makeTheCall(String phoneNb) {

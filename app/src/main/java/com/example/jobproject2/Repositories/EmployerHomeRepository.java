@@ -2,8 +2,10 @@ package com.example.jobproject2.Repositories;
 
 import com.example.jobproject2.Interfaces.IEmployeeHomeFirebaseCallback;
 import com.example.jobproject2.Interfaces.IEmployerHomeEvents;
+import com.example.jobproject2.Models.FavouriteUser;
 import com.example.jobproject2.Models.User;
 import com.example.jobproject2.Tools.Constants;
+import com.example.jobproject2.Tools.SharedPreferencesManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,17 +19,23 @@ public class EmployerHomeRepository {
     private IEmployerHomeEvents events;
 
     public void addFavouriteUser(DatabaseReference ref, User employee, String currentUserId) {
-        ref.child(Constants.FIREBASE_REF_FAV_USERS).child(currentUserId).setValue(employee).addOnCompleteListener(task -> {
-            if (task.isSuccessful())
-                callback.onAddFavouriteUserSuccess(true);
-            else
-                callback.onAddFavouriteUserSuccess(false);
+        FavouriteUser favouriteUser = new FavouriteUser();
+        favouriteUser.setId(employee.getUserId());
 
+        ref.child(Constants.FIREBASE_REF_FAV_USERS).child(currentUserId).child(employee.getUserId())
+                .setValue(favouriteUser).addOnCompleteListener(task -> {
+
+            callback.onAddFavouriteUserSuccess(task.isSuccessful());
         });
     }
 
-    public void getAllUsers(DatabaseReference ref) {
-        ref.child(Constants.FIREBASE_REF_USERS).addListenerForSingleValueEvent(
+    public void getAllUsers(DatabaseReference ref, boolean shouldGetFavourites, String userId) {
+        DatabaseReference newRef = ref.child(Constants.FIREBASE_REF_USERS);
+
+        if (shouldGetFavourites)
+            newRef = ref.child(Constants.FIREBASE_REF_FAV_USERS).child(userId);
+
+        newRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
     private ImageButton signOutImgBtn, editImgBtn;
     private Spinner salariesSpinner, positionsSpinner;
     private ProgressDialog progressDialog;
-    private HomeLogic mLogic = new HomeLogic();
+    private HomeLogic mLogic;
     private DatabaseReference mRef;
 
     private ArrayAdapter<String> salariesAdapter;
@@ -83,6 +83,8 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         signOutImgBtn = findViewById(R.id.signOutImgBtn);
         profilePicImgV = findViewById(R.id.profilePicImgV);
         editImgBtn = findViewById(R.id.editImgBtn);
+
+        mLogic = new HomeLogic(this);
 
         loadSpinnersData();
         handleLoadingUserData();
@@ -126,7 +128,6 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
             Picasso.with(getApplicationContext()).load(i.getStringExtra("profilePicture")).placeholder(R.drawable.user_placeholder).into(profilePicImgV);
 
         } else {
-            mLogic.setCallback(this);
 
             mRef = FirebaseDatabase.getInstance().getReference();
             storage = FirebaseStorage.getInstance();
@@ -189,17 +190,11 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         // resultCode is RESULT_OK
         // then set image in the image view
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-
             // Get the Uri of data
             filePath = data.getData();
             try {
                 // Setting image on image view using Bitmap
-                Bitmap bitmap = MediaStore
-                        .Images
-                        .Media
-                        .getBitmap(
-                                getContentResolver(),
-                                filePath);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 profilePicImgV.setImageBitmap(bitmap);
             } catch (IOException e) {
                 // Log the exception

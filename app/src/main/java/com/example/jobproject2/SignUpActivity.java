@@ -41,8 +41,7 @@ public class SignUpActivity extends AppCompatActivity implements ISignUpActivity
     }
 
     public void init() {
-        logic = new SignUpActivityLogic(this, this);
-        logic.setSignUpActivityCallbacks(this);
+        logic = new SignUpActivityLogic(this, this, this);
 
         toolbar = findViewById(R.id.toolbar);
 

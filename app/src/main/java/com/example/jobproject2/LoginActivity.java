@@ -44,8 +44,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivityCa
         createNewAccountTxtV = findViewById(R.id.createNewAccountTxtV);
         loginBtn = findViewById(R.id.loginBtn);
 
-        logic = new LoginActivityLogic(this, this);
-        logic.setLoginActivityCallbacks(this);
+        logic = new LoginActivityLogic(this, this, this);
 
         loginIfSharedPreferencesExist();
         setListeners();

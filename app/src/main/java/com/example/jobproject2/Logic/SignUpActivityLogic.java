@@ -1,26 +1,24 @@
 package com.example.jobproject2.Logic;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.example.jobproject2.Interfaces.ISignUpActivityCallbacks;
-import com.example.jobproject2.Models.User;
+import com.example.jobproject2.Interfaces.ISignUpActivityEvents;
 import com.example.jobproject2.R;
+import com.example.jobproject2.Repositories.SignUpActivityRepository;
 import com.example.jobproject2.Tools.Constants;
 import com.example.jobproject2.Tools.SharedPreferencesManager;
-import com.example.jobproject2.Tools.Utils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
-public class SignUpActivityLogic extends BasicLogic {
+public class SignUpActivityLogic extends BasicLogic implements ISignUpActivityEvents {
+    private SignUpActivityRepository repository = new SignUpActivityRepository();
 
-    private ISignUpActivityCallbacks signUpActivityCallbacks;
-
-    public SignUpActivityLogic(Context context, Activity activity) {
+    public SignUpActivityLogic(Context context, Activity activity, ISignUpActivityCallbacks callbacks) {
         super(context, activity);
+        repository.setSignUpActivityCallbacks(callbacks);
+        repository.setEvents(this);
     }
 
     public void validateFields(TextInputLayout firstNameInputLyt, TextInputLayout lastNameInputLyt, TextInputLayout mobileNbInputLyt,
@@ -33,7 +31,7 @@ public class SignUpActivityLogic extends BasicLogic {
         String lastName = lastNameInputEditTxt.getText().toString();
         String email = emailInputEditTxt.getText().toString();
         String password = passwordInputEditTxt.getText().toString();
-        String mobileNb = mobileNbInputEditTxt.getText().toString();
+        String mobileNb = mobileNbInputEditTxt.getText().toString(); // IN A REAL WORLD APPLICATION, AN OTP MUST BE SENT TO VERIFY THE PHONE NB
         String companyName = companyNameEdtTxt.getText().toString();
 
         boolean isEmpty = firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty();
@@ -58,6 +56,16 @@ public class SignUpActivityLogic extends BasicLogic {
                 emailInputEditTxt.setError(activity.getString(R.string.email_not_valid));
             }
 
+            if(!firstName.matches(Constants.NAME_PATTERN)) {
+                shouldCreateAccount = false;
+                firstNameInputLyt.setError(activity.getString(R.string.name_not_valid));
+            }
+
+            if(!lastName.matches(Constants.NAME_PATTERN)) {
+                shouldCreateAccount = false;
+                lastNameInputLyt.setError(activity.getString(R.string.name_not_valid));
+            }
+
             if (password.length() < 8) {
                 shouldCreateAccount = false;
                 passwordInputLyt.setError(activity.getString(R.string.password_short));
@@ -70,36 +78,11 @@ public class SignUpActivityLogic extends BasicLogic {
     }
 
     private void createAccount(String firstName, String lastName, String email, String password, String mobileNb, String role) {
-
-        ProgressDialog progressDialog = Utils.createAndShowProgressDialog(context);
-
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-
-            if (task.isSuccessful()) {
-                progressDialog.dismiss();
-                FirebaseUser user = mAuth.getCurrentUser();
-                writeNewUser(user.getUid(), firstName, lastName, email, password, mobileNb, role);
-                signUpActivityCallbacks.onSignUpSuccess();
-
-            } else {
-                progressDialog.dismiss();
-                signUpActivityCallbacks.onSignUpFailure(task.getException().getMessage());
-            }
-        });
+        repository.createAccount(context, mAuth, firstName, lastName, email, password, mobileNb, role);
     }
 
-    private void writeNewUser(String userId, String firstName, String lastName, String email, String password, String mobileNb, String role) {
-        User user = new User(userId, firstName, lastName, email, password, mobileNb);
-        user.setPassword(password);
-        user.setRole(role);
-        user.setPosition("N/A");
-        user.setSalary("N/A");
-
-        FirebaseDatabase.getInstance().getReference().child(Constants.NODE_USERS).child(userId).setValue(user);
-        saveUserDataLocally(userId, firstName + " " + lastName, role, mobileNb);
-    }
-
-    private void saveUserDataLocally(String userId, String name, String role, String phoneNumber) {
+    @Override
+    public void saveUserDataLocally(String userId, String name, String role, String phoneNumber) {
         SharedPreferencesManager.setUserId(context, userId);
         SharedPreferencesManager.setName(context, name);
         SharedPreferencesManager.setRole(context, role);
@@ -109,9 +92,5 @@ public class SignUpActivityLogic extends BasicLogic {
     private void showError(TextInputEditText textInputEditText, TextInputLayout textInputLayout) {
         if (textInputEditText.getText().toString().isEmpty())
             textInputLayout.setError(activity.getString(R.string.field_required));
-    }
-
-    public void setSignUpActivityCallbacks(ISignUpActivityCallbacks signUpActivityCallbacks) {
-        this.signUpActivityCallbacks = signUpActivityCallbacks;
     }
 }
