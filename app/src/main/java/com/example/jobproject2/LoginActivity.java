@@ -69,10 +69,18 @@ public class LoginActivity extends AppCompatActivity implements ILoginActivityCa
         String email = emailInputEditTxt.getText().toString();
         String password = passwordInputEditTxt.getText().toString();
 
-        // TODO CHECK IF USER ENTERED HIS EMAIL AND PASSWORD
+        if(email.isEmpty()) {
+            emailInputEditTxt.setError(getString(R.string.field_required));
+        }
 
-        showProgressDialog();
-        logic.authenticate(email, password);
+        if(password.isEmpty()) {
+            passwordInputEditTxt.setError(getString(R.string.field_required));
+        }
+
+        if(!email.isEmpty() && !password.isEmpty()) {
+            showProgressDialog();
+            logic.authenticate(email, password);
+        }
     }
 
     private void showProgressDialog() {

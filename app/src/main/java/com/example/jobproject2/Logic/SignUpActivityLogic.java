@@ -24,7 +24,7 @@ public class SignUpActivityLogic extends BasicLogic implements ISignUpActivityEv
     public void validateFields(TextInputLayout firstNameInputLyt, TextInputLayout lastNameInputLyt, TextInputLayout mobileNbInputLyt,
                                TextInputLayout emailInputLyt, TextInputLayout passwordInputLyt, TextInputEditText firstNameInputEditTxt,
                                TextInputEditText lastNameInputEditTxt, TextInputEditText mobileNbInputEditTxt,
-                                TextInputEditText emailInputEditTxt, TextInputEditText passwordInputEditTxt, TextInputLayout companyNameInputLyt,
+                               TextInputEditText emailInputEditTxt, TextInputEditText passwordInputEditTxt, TextInputLayout companyNameInputLyt,
                                TextInputEditText companyNameEdtTxt, String role) {
 
         String firstName = firstNameInputEditTxt.getText().toString();
@@ -36,7 +36,7 @@ public class SignUpActivityLogic extends BasicLogic implements ISignUpActivityEv
 
         boolean isEmpty = firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty();
 
-        if(role.equals(Constants.ROLE_EMPLOYEE))
+        if (role.equals(Constants.ROLE_EMPLOYEE))
             isEmpty |= mobileNb.isEmpty();
         else
             isEmpty |= companyName.isEmpty();
@@ -56,12 +56,12 @@ public class SignUpActivityLogic extends BasicLogic implements ISignUpActivityEv
                 emailInputEditTxt.setError(activity.getString(R.string.email_not_valid));
             }
 
-            if(!firstName.matches(Constants.NAME_PATTERN)) {
+            if (!firstName.matches(Constants.NAME_PATTERN)) {
                 shouldCreateAccount = false;
                 firstNameInputLyt.setError(activity.getString(R.string.name_not_valid));
             }
 
-            if(!lastName.matches(Constants.NAME_PATTERN)) {
+            if (!lastName.matches(Constants.NAME_PATTERN)) {
                 shouldCreateAccount = false;
                 lastNameInputLyt.setError(activity.getString(R.string.name_not_valid));
             }
@@ -71,10 +71,43 @@ public class SignUpActivityLogic extends BasicLogic implements ISignUpActivityEv
                 passwordInputLyt.setError(activity.getString(R.string.password_short));
             }
 
+            String userCountryCode = mobileNbDoesNotContainCountryCode(mobileNb);
+            String mobileNbWithoutCountryCodeAnd0 = "";
+
+            if (userCountryCode.isEmpty()) { // user did not enter a country code
+                shouldCreateAccount = false;
+                mobileNbInputLyt.setError(activity.getString(R.string.country_code_required));
+            }
+
             if (shouldCreateAccount) {
-                createAccount(firstName, lastName, email, password, mobileNb, role);
+                String mobileNbWithoutCountryCode = mobileNb.replace("+" + userCountryCode, "");
+
+                if(mobileNbWithoutCountryCode.toCharArray()[0] == '0') { // nb starts with 0, remove it
+                     mobileNbWithoutCountryCodeAnd0 = mobileNbWithoutCountryCode.substring(1);
+                } else {
+                    mobileNbWithoutCountryCodeAnd0 = mobileNbWithoutCountryCode;
+                }
+
+                createAccount(firstName, lastName, email, password, "+" + userCountryCode + mobileNbWithoutCountryCodeAnd0, role);
             }
         }
+    }
+
+    private String mobileNbDoesNotContainCountryCode(String mobileNb) {
+        String userCountryDialCode = "";
+
+        String[] countryCodeArray = context.getResources().getStringArray(R.array.DialingCountryCode);
+
+        for (int i = 0; i < countryCodeArray.length; i++) {
+            String countryDialNb = countryCodeArray[i].split(",")[0];
+
+            if (mobileNb.startsWith("+" + countryDialNb)) {
+                userCountryDialCode = countryDialNb;
+                break;
+            }
+        }
+
+        return userCountryDialCode;
     }
 
     private void createAccount(String firstName, String lastName, String email, String password, String mobileNb, String role) {

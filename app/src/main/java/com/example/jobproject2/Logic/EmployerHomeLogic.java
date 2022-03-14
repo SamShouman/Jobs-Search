@@ -8,11 +8,7 @@ import com.example.jobproject2.Models.User;
 import com.example.jobproject2.Repositories.EmployerHomeRepository;
 import com.example.jobproject2.Tools.Constants;
 import com.example.jobproject2.Tools.SharedPreferencesManager;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -72,9 +68,32 @@ public class EmployerHomeLogic implements IEmployerHomeEvents {
 
     @Override
     public void collectAllUsers(Map<String, Object> users, IEmployeeHomeFirebaseCallback callback) {
+        ArrayList<User> usersEmployeeArrayLst = getUsers(users);
+
+        callback.onGetAllUsersCallback(usersEmployeeArrayLst);
+    }
+
+    @Override
+    public void collectFavouriteUsers(Map<String, Object> allUsersMap, Map<String, String> favUserIdsMap, IEmployeeHomeFirebaseCallback callback) {
+        ArrayList<User> usersEmployeeArrayLst = getUsers(allUsersMap);
+        ArrayList<User> res = new ArrayList<>();
+
+        for (String key: favUserIdsMap.keySet()) {
+            String userId = favUserIdsMap.get(key);
+
+            for(User user: usersEmployeeArrayLst) {
+                if(user.getUserId().equals(userId))
+                    res.add(user);
+            }
+        }
+
+        callback.onGetAllUsersCallback(res);
+    }
+
+    private ArrayList<User> getUsers(Map<String, Object> users) {
         ArrayList<User> usersEmployeeArrayLst = new ArrayList<>();
 
-        for (Map.Entry<String, Object> entry : users.entrySet()){
+        for (Map.Entry<String, Object> entry : users.entrySet()) {
             Map user = (Map) entry.getValue();
 
             if(user.get("role").equals(Constants.ROLE_EMPLOYEE)) {
@@ -93,7 +112,6 @@ public class EmployerHomeLogic implements IEmployerHomeEvents {
                 usersEmployeeArrayLst.add(ue);
             }
         }
-
-        callback.onGetAllUsersCallback(usersEmployeeArrayLst);
+        return usersEmployeeArrayLst;
     }
 }

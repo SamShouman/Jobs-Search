@@ -154,9 +154,11 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
 
     private void setListeners() {
         saveBtn.setOnClickListener(view -> {
-            showProgressDialog("Saving new data...");
-            mLogic.checkValidation(salariesSpinner.getSelectedItem().toString(), positionsSpinner.getSelectedItem().toString(),
+           boolean isValid =  mLogic.checkValidation(salariesSpinner.getSelectedItem().toString(), positionsSpinner.getSelectedItem().toString(),
                     mobileNbInputEdtTxt, descriptionInputEdtTxt, mRef, getApplicationContext(), filePath, storageReference);
+
+//           if(isValid)
+//               showProgressDialog("Saving new data...");
         });
 
         signOutImgBtn.setOnClickListener(view -> {
@@ -227,8 +229,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
 
     @Override
     public void onUpdateUserSuccess() {
-        if(filePath == null)
-            progressDialog.dismiss();
+        progressDialog.dismiss();
 
         Toast.makeText(this, "Data updated successfully!", Toast.LENGTH_SHORT).show();
     }

@@ -32,15 +32,17 @@ public class HomeLogic {
         repository.setCallback(callback);
     }
 
-    public void checkValidation(String salary, String position, EditText phoneNbEdtTxt, EditText descriptionEdtTxt, DatabaseReference ref, Context ctx,
+    public boolean checkValidation(String salary, String position, EditText phoneNbEdtTxt, EditText descriptionEdtTxt, DatabaseReference ref, Context ctx,
                                 Uri filePath, StorageReference storageReference) {
 
         if (phoneNbEdtTxt.getText().toString().isEmpty()) {
             phoneNbEdtTxt.setError(ctx.getString(R.string.field_required));
+            return false;
         } else {
             // edit data
             repository.saveNewData(salary, position, phoneNbEdtTxt.getText().toString(), descriptionEdtTxt.getText().toString(), ref, ctx);
             repository.uploadImage(filePath, ctx, storageReference, ref);
+            return true;
         }
     }
 

@@ -80,6 +80,7 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
             mLogic.getAllUsers(mRef, b, getApplicationContext());
         });
 
+        // when user starts typing begin filtering
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

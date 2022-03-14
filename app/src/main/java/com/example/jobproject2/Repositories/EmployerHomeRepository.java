@@ -1,5 +1,7 @@
 package com.example.jobproject2.Repositories;
 
+import androidx.annotation.NonNull;
+
 import com.example.jobproject2.Interfaces.IEmployeeHomeFirebaseCallback;
 import com.example.jobproject2.Interfaces.IEmployerHomeEvents;
 import com.example.jobproject2.Models.FavouriteUser;
@@ -22,8 +24,8 @@ public class EmployerHomeRepository {
         FavouriteUser favouriteUser = new FavouriteUser();
         favouriteUser.setId(employee.getUserId());
 
-        ref.child(Constants.FIREBASE_REF_FAV_USERS).child(currentUserId).child(employee.getUserId())
-                .setValue(favouriteUser).addOnCompleteListener(task -> {
+        ref.child(Constants.FIREBASE_REF_FAV_USERS).child(currentUserId).push().setValue(employee.getUserId())
+                .addOnCompleteListener(task -> {
 
             callback.onAddFavouriteUserSuccess(task.isSuccessful());
         });
@@ -32,14 +34,26 @@ public class EmployerHomeRepository {
     public void getAllUsers(DatabaseReference ref, boolean shouldGetFavourites, String userId) {
         DatabaseReference newRef = ref.child(Constants.FIREBASE_REF_USERS);
 
-        if (shouldGetFavourites)
-            newRef = ref.child(Constants.FIREBASE_REF_FAV_USERS).child(userId);
-
         newRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        events.collectAllUsers((Map<String, Object>) dataSnapshot.getValue(), callback);
+                        Map<String, Object> allUsersMap = (Map<String, Object>) dataSnapshot.getValue();
+                        if (shouldGetFavourites) {
+                            ref.child(Constants.FIREBASE_REF_FAV_USERS).child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    events.collectFavouriteUsers(allUsersMap, (Map<String, String>) snapshot.getValue(), callback);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        } else {
+                            events.collectAllUsers(allUsersMap, callback);
+                        }
                     }
 
                     @Override
