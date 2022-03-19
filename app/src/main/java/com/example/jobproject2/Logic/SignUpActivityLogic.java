@@ -71,8 +71,9 @@ public class SignUpActivityLogic extends BasicLogic implements ISignUpActivityEv
                 passwordInputLyt.setError(activity.getString(R.string.password_short));
             }
 
-            String userCountryCode = mobileNbDoesNotContainCountryCode(mobileNb);
-            String mobileNbWithoutCountryCodeAnd0 = "";
+            // mobile nb validation
+            String userCountryCode = getMobileNbCountryCode(mobileNb);
+            String mobileNbWithoutCountryCodeAnd0;
 
             if (userCountryCode.isEmpty()) { // user did not enter a country code
                 shouldCreateAccount = false;
@@ -85,21 +86,21 @@ public class SignUpActivityLogic extends BasicLogic implements ISignUpActivityEv
                 if(mobileNbWithoutCountryCode.toCharArray()[0] == '0') { // nb starts with 0, remove it
                      mobileNbWithoutCountryCodeAnd0 = mobileNbWithoutCountryCode.substring(1);
                 } else {
-                    mobileNbWithoutCountryCodeAnd0 = mobileNbWithoutCountryCode;
+                    mobileNbWithoutCountryCodeAnd0 =  mobileNbWithoutCountryCode;
                 }
 
-                createAccount(firstName, lastName, email, password, "+" + userCountryCode + mobileNbWithoutCountryCodeAnd0, role);
+               createAccount(firstName, lastName, email, password, "+" + userCountryCode + mobileNbWithoutCountryCodeAnd0, role);
             }
         }
     }
 
-    private String mobileNbDoesNotContainCountryCode(String mobileNb) {
+    private String getMobileNbCountryCode(String mobileNb) {
         String userCountryDialCode = "";
 
         String[] countryCodeArray = context.getResources().getStringArray(R.array.DialingCountryCode);
 
-        for (int i = 0; i < countryCodeArray.length; i++) {
-            String countryDialNb = countryCodeArray[i].split(",")[0];
+        for (String s : countryCodeArray) {
+            String countryDialNb = s.split(",")[0];
 
             if (mobileNb.startsWith("+" + countryDialNb)) {
                 userCountryDialCode = countryDialNb;

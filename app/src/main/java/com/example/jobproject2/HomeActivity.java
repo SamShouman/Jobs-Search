@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.jobproject2.Interfaces.IHomeFirebaseCallback;
 import com.example.jobproject2.Logic.HomeLogic;
+import com.example.jobproject2.Models.Position;
+import com.example.jobproject2.Models.Salary;
 import com.example.jobproject2.Models.User;
 import com.example.jobproject2.Tools.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
@@ -30,6 +32,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -48,6 +51,16 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
 
     private ArrayAdapter<String> salariesAdapter;
     private ArrayAdapter positionsAdapter;
+
+    private ArrayList<Position> positionsArrayLst = new ArrayList<>();
+    private ArrayList<String> positionsNamesArrayLst = new ArrayList<>();
+
+    private ArrayList<Salary> salariesArrayLst = new ArrayList<>();
+    private ArrayList<String> salariesNamesArrayLst = new ArrayList<>();
+
+    private String positionId, salaryId;
+
+    private boolean isEmployerVisiting = false;
 
     private Uri filePath;
     private final int PICK_IMAGE_REQUEST = 1; // used to check if we returned from gallery after choosing an image
@@ -86,25 +99,15 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
 
         mLogic = new HomeLogic(this);
 
-        loadSpinnersData();
         handleLoadingUserData();
-    }
-
-    private void loadSpinnersData() {
-        String[] positionsArray = getResources().getStringArray(R.array.positionsArray);
-        String[] salariesArray = getResources().getStringArray(R.array.salariesArray);
-
-        positionsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, positionsArray);
-        positionsSpinner.setAdapter(positionsAdapter);
-
-        salariesAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, salariesArray);
-        salariesSpinner.setAdapter(salariesAdapter);
     }
 
     private void handleLoadingUserData() {
         Intent i = getIntent();
 
         if (i.hasExtra("name")) { // then the employer is trying to load the employee data
+            isEmployerVisiting = true;
+
             String name = i.getStringExtra("name");
 
             titleTxtV.setVisibility(View.GONE);
@@ -121,11 +124,16 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
             descriptionInputEdtTxt.setText(i.getStringExtra("description"));
             descriptionInputEdtTxt.setEnabled(false);
 
-            loadUserSpinnersData(i.getStringExtra("salary"), i.getStringExtra("position"));
             salariesSpinner.setEnabled(false);
             positionsSpinner.setEnabled(false);
 
+            positionId = i.getStringExtra("position");
+            salaryId = i.getStringExtra("salary");
+
             Picasso.with(getApplicationContext()).load(i.getStringExtra("profilePicture")).placeholder(R.drawable.user_placeholder).into(profilePicImgV);
+
+            mLogic.getPositionsFromDb(mRef);
+            mLogic.getSalariesFromDb(mRef);
 
         } else {
 
@@ -154,8 +162,16 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
 
     private void setListeners() {
         saveBtn.setOnClickListener(view -> {
-           boolean isValid =  mLogic.checkValidation(salariesSpinner.getSelectedItem().toString(), positionsSpinner.getSelectedItem().toString(),
-                    mobileNbInputEdtTxt, descriptionInputEdtTxt, mRef, getApplicationContext(), filePath, storageReference);
+            boolean isValid = mLogic.checkValidation(
+                    salariesArrayLst.get(salariesSpinner.getSelectedItemPosition()).getId(),
+                    positionsArrayLst.get(positionsSpinner.getSelectedItemPosition()).getId(),
+                    mobileNbInputEdtTxt,
+                    descriptionInputEdtTxt,
+                    mRef,
+                    getApplicationContext(),
+                    filePath,
+                    storageReference
+            );
 
 //           if(isValid)
 //               showProgressDialog("Saving new data...");
@@ -205,12 +221,14 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         }
     }
 
-    private void loadUserSpinnersData(String salary, String position) {
-       int positionIndex =  mLogic.getUserPositionIndex(getApplicationContext(), position);
-       int salaryIndex= mLogic.getUserSalaryIndex(getApplicationContext(), salary);
+    private void loadUserPosition(String positionId) {
+        int positionIndex = mLogic.getUserPositionIndex(positionId, positionsArrayLst);
+        positionsSpinner.setSelection(positionIndex);
+    }
 
-       salariesSpinner.setSelection(salaryIndex);
-       positionsSpinner.setSelection(positionIndex);
+    private void loadUserSalary(String salaryId) {
+        int salaryIndex = mLogic.getUserSalaryIndex(salaryId, salariesArrayLst);
+        salariesSpinner.setSelection(salaryIndex);
     }
 
     @SuppressLint("SetTextI18n")
@@ -219,18 +237,43 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         titleTxtV.setText("Welcome, " + userEmployee.getFirstName() + " " + userEmployee.getLastName());
         descriptionInputEdtTxt.setText(userEmployee.getDescription());
 
-        loadUserSpinnersData(userEmployee.getSalary(), userEmployee.getPosition());
-
         // pass the value of profilePicture attribute and the library will handle loading of the image
         Picasso.with(getApplicationContext()).load(userEmployee.getProfilePicture()).placeholder(R.drawable.user_placeholder).into(profilePicImgV);
+
+        positionId = userEmployee.getPosition();
+        salaryId = userEmployee.getSalary();
+
+        mLogic.getPositionsFromDb(mRef);
+        mLogic.getSalariesFromDb(mRef);
 
         progressDialog.dismiss();
     }
 
     @Override
+    public void onPositionsRetrieved(ArrayList<Position> positionsArrayLst) {
+        this.positionsArrayLst = positionsArrayLst;
+
+        positionsNamesArrayLst = mLogic.getNames(positionsArrayLst);
+        positionsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, positionsNamesArrayLst);
+        positionsSpinner.setAdapter(positionsAdapter);
+
+        loadUserPosition(positionId);
+    }
+
+    @Override
+    public void onSalariesRetrieved(ArrayList<Salary> salariesArrayLst) {
+        this.salariesArrayLst = salariesArrayLst;
+
+        salariesNamesArrayLst = mLogic.getNames(salariesArrayLst);
+        salariesAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, salariesNamesArrayLst);
+        salariesSpinner.setAdapter(salariesAdapter);
+
+        loadUserSalary(salaryId);
+    }
+
+    @Override
     public void onUpdateUserSuccess() {
         progressDialog.dismiss();
-
         Toast.makeText(this, "Data updated successfully!", Toast.LENGTH_SHORT).show();
     }
 

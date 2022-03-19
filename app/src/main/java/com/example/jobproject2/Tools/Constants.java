@@ -7,6 +7,8 @@ public class Constants {
 
     public static final String FIREBASE_REF_USERS = "users";
     public static final String FIREBASE_REF_FAV_USERS = "favourite_users";
+    public static final String FIREBASE_REF_POSITIONS = "positions";
+    public static final String FIREBASE_REF_SALARIES = "salaries";
 
     public static final String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 

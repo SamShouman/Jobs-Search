@@ -1,15 +1,15 @@
 <resources>
     <!-- positions -->
-    <string-array name="positionsArray">
-        <item> N/A </item>
-        <item> Internship </item>
-        <item> Mobile Developer </item>
-        <item> Web Developer </item>
-        <item> AI Engineer </item>
-        <item> BlockChain Developer </item>
-        <item> Data Scientist </item>
-        <item> Unity Developer </item>
-    </string-array>
+<!--    <string-array name="positionsArray">-->
+<!--        <item> N/A </item>-->
+<!--        <item> Internship </item>-->
+<!--        <item> Mobile Developer </item>-->
+<!--        <item> Web Developer </item>-->
+<!--        <item> AI Engineer </item>-->
+<!--        <item> BlockChain Developer </item>-->
+<!--        <item> Data Scientist </item>-->
+<!--        <item> Unity Developer </item>-->
+<!--    </string-array>-->
 
     <!-- salary -->
     <string-array name="salariesArray">

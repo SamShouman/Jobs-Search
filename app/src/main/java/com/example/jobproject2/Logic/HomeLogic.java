@@ -9,6 +9,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.jobproject2.Interfaces.IHomeFirebaseCallback;
+import com.example.jobproject2.Models.BasicModel;
+import com.example.jobproject2.Models.Position;
+import com.example.jobproject2.Models.Salary;
 import com.example.jobproject2.Models.User;
 import com.example.jobproject2.R;
 import com.example.jobproject2.Repositories.HomeActivityRepository;
@@ -24,6 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.util.ArrayList;
 
 public class HomeLogic {
     private HomeActivityRepository repository = new HomeActivityRepository();
@@ -50,11 +55,10 @@ public class HomeLogic {
         repository.getUserDataFromDb(ref, ctx);
     }
 
-    public int getUserPositionIndex(Context context, String position) {
-        String[] positionsArray = context.getResources().getStringArray(R.array.positionsArray);
+    public int getUserPositionIndex(String position, ArrayList<Position> arrayLst) {
         int index = 0;
-        for(int i=0; i< positionsArray.length; i++)
-            if(positionsArray[i].equals(position)) {
+        for(int i=0; i< arrayLst.size(); i++)
+            if(arrayLst.get(i).getId().equals(position)) {
                 index = i;
                 break;
             }
@@ -62,15 +66,33 @@ public class HomeLogic {
         return index;
     }
 
-    public int getUserSalaryIndex(Context context, String salary) {
-        String[] salariesArray = context.getResources().getStringArray(R.array.salariesArray);
+    public int getUserSalaryIndex(String salary, ArrayList<Salary> arrayLst) {
         int index = 0;
-        for(int i=0; i< salariesArray.length; i++)
-            if(salariesArray[i].equals(salary)) {
+        for(int i=0; i< arrayLst.size(); i++)
+            if(arrayLst.get(i).getId().equals(salary)) {
                 index = i;
                 break;
             }
 
         return index;
+    }
+
+    public <T> ArrayList<String> getNames(ArrayList<T> arrayLst) {
+        ArrayList<String> res = new ArrayList<>();
+
+        for(T p: arrayLst) {
+            BasicModel bm = (BasicModel) p;
+            res.add(bm.getName());
+        }
+
+        return  res;
+    }
+
+    public void getPositionsFromDb(DatabaseReference ref) {
+        repository.getPositions(ref);
+    }
+
+    public void getSalariesFromDb(DatabaseReference ref) {
+        repository.getSalaries(ref);
     }
 }

@@ -7,6 +7,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.jobproject2.Interfaces.IHomeFirebaseCallback;
+import com.example.jobproject2.Models.Position;
+import com.example.jobproject2.Models.Salary;
 import com.example.jobproject2.Models.User;
 import com.example.jobproject2.Tools.Constants;
 import com.example.jobproject2.Tools.SharedPreferencesManager;
@@ -15,6 +17,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
 
 public class HomeActivityRepository {
     private IHomeFirebaseCallback callback;
@@ -52,6 +56,42 @@ public class HomeActivityRepository {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user= snapshot.getValue(User.class);
                 callback.onUserDataRetrieved(user);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    public void getPositions(DatabaseReference ref) {
+        ref.child(Constants.FIREBASE_REF_POSITIONS).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<Position> positionsArrayLst = new ArrayList<>();
+
+                for (DataSnapshot s : snapshot.getChildren()) {
+                    positionsArrayLst.add(s.getValue(Position.class));
+                }
+
+                callback.onPositionsRetrieved(positionsArrayLst);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    public void getSalaries(DatabaseReference ref) {
+        ref.child(Constants.FIREBASE_REF_SALARIES).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<Salary> salariesArrayLst = new ArrayList<>();
+
+                for (DataSnapshot s : snapshot.getChildren()) {
+                    salariesArrayLst.add(s.getValue(Salary.class));
+                }
+
+                callback.onSalariesRetrieved(salariesArrayLst);
             }
 
             @Override
