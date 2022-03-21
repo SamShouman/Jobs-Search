@@ -12,6 +12,8 @@ public class User {
     private String description;
     private String salary;
     private String position;
+    private String position2;
+    private String position3;
     private String profilePicture;
     private String companyName;
 
@@ -119,6 +121,22 @@ public class User {
 
     public void setPosition(String positionId) {
         this.position = positionId;
+    }
+
+    public String getPosition2() {
+        return position2;
+    }
+
+    public void setPosition2(String position2) {
+        this.position2 = position2;
+    }
+
+    public String getPosition3() {
+        return position3;
+    }
+
+    public void setPosition3(String position3) {
+        this.position3 = position3;
     }
 
     public String getProfilePicture() {

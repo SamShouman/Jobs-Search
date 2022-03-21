@@ -78,12 +78,14 @@ public class EmployerHomeLogic implements IEmployerHomeEvents {
         ArrayList<User> usersEmployeeArrayLst = getUsers(allUsersMap);
         ArrayList<User> res = new ArrayList<>();
 
-        for (String key: favUserIdsMap.keySet()) {
-            String userId = favUserIdsMap.get(key);
+        if(favUserIdsMap != null) {
+            for (String key : favUserIdsMap.keySet()) {
+                String userId = favUserIdsMap.get(key);
 
-            for(User user: usersEmployeeArrayLst) {
-                if(user.getUserId().equals(userId))
-                    res.add(user);
+                for (User user : usersEmployeeArrayLst) {
+                    if (user.getUserId().equals(userId))
+                        res.add(user);
+                }
             }
         }
 
@@ -108,6 +110,8 @@ public class EmployerHomeLogic implements IEmployerHomeEvents {
                 ue.setProfilePicture((String) user.get("profilePicture"));
                 ue.setSalary((String) user.get("salary"));
                 ue.setPosition((String) user.get("position"));
+                ue.setPosition2((String) user.get("position2"));
+                ue.setPosition3((String) user.get("position3"));
 
                 usersEmployeeArrayLst.add(ue);
             }

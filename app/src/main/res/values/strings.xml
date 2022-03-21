@@ -232,7 +232,9 @@
 
     <!-- labels -->
     <string name="app_name">Jobs Search</string>
-    <string name="position">Position</string>
+    <string name="position_1">Position 1</string>
+    <string name="position_2">Position 2</string>
+    <string name="position_3">Position 3</string>
     <string name="name">Name</string>
     <string name="search_employees">Search employees…</string>
     <string name="home_hint">Find your perfect employee</string>
@@ -263,4 +265,5 @@
     <string name="salary">Salary</string>
     <string name="name_not_valid">Name not valid</string>
     <string name="country_code_required">Country code required.</string>
+    <string name="no_desc_available">No description available.</string>
 </resources>

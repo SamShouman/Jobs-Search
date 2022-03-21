@@ -48,7 +48,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
 
         holder.userNameTxtV.setText(user.getName());
 
-        holder.userDescriptionTxtV.setText(user.getPosition());
+        if( user.getDescription() == null || user.getDescription().isEmpty())
+            holder.userDescriptionTxtV.setText(R.string.no_desc_available);
+        else
+            holder.userDescriptionTxtV.setText(user.getDescription());
 
         if (isLoadingFavourites)
             holder.favImgBtn.setVisibility(View.GONE);

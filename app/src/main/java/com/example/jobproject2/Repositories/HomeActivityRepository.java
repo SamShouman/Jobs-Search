@@ -23,13 +23,15 @@ import java.util.ArrayList;
 public class HomeActivityRepository {
     private IHomeFirebaseCallback callback;
 
-    public void saveNewData(String salary, String position, String phoneNb, String description, DatabaseReference ref, Context ctx) {
+    public void saveNewData(String salary, String position, String position2, String position3, String phoneNb, String description, DatabaseReference ref, Context ctx) {
         ref = ref.child(Constants.FIREBASE_REF_USERS).child(SharedPreferencesManager.getUserId(ctx));
 
-        ref.child("mobileNb").setValue(phoneNb);
-        ref.child("description").setValue(description);
+        ref.child("mobileNb").setValue(phoneNb.trim());
+        ref.child("description").setValue(description.trim());
         ref.child("salary").setValue(salary);
         ref.child("position").setValue(position);
+        ref.child("position2").setValue(position2);
+        ref.child("position3").setValue(position3);
 
         callback.onUpdateUserSuccess();
     }

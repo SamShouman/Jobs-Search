@@ -44,7 +44,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
     private CircleImageView profilePicImgV;
     private MaterialButton saveBtn;
     private ImageButton signOutImgBtn, editImgBtn;
-    private Spinner salariesSpinner, positionsSpinner;
+    private Spinner salariesSpinner, positionsSpinner, positions2Spinner, positions3Spinner;
     private ProgressDialog progressDialog;
     private HomeLogic mLogic;
     private DatabaseReference mRef;
@@ -58,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
     private ArrayList<Salary> salariesArrayLst = new ArrayList<>();
     private ArrayList<String> salariesNamesArrayLst = new ArrayList<>();
 
-    private String positionId, salaryId;
+    private String positionId, positionId2, positionId3, salaryId;
 
     private boolean isEmployerVisiting = false;
 
@@ -82,6 +82,8 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
 
         salariesSpinner = findViewById(R.id.salariesSpinner);
         positionsSpinner = findViewById(R.id.positionsSpinner);
+        positions2Spinner = findViewById(R.id.positions2Spinner);
+        positions3Spinner = findViewById(R.id.positions3Spinner);
 
         nameInputLyt = findViewById(R.id.nameInputLyt);
         nameInputEdtTxt = findViewById(R.id.nameInputEditTxt);
@@ -98,6 +100,8 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         editImgBtn = findViewById(R.id.editImgBtn);
 
         mLogic = new HomeLogic(this);
+
+        mRef = FirebaseDatabase.getInstance().getReference();
 
         handleLoadingUserData();
     }
@@ -126,8 +130,13 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
 
             salariesSpinner.setEnabled(false);
             positionsSpinner.setEnabled(false);
+            positions2Spinner.setEnabled(false);
+            positions3Spinner.setEnabled(false);
 
             positionId = i.getStringExtra("position");
+            positionId2 = i.getStringExtra("position2");
+            positionId3 = i.getStringExtra("position3");
+
             salaryId = i.getStringExtra("salary");
 
             Picasso.with(getApplicationContext()).load(i.getStringExtra("profilePicture")).placeholder(R.drawable.user_placeholder).into(profilePicImgV);
@@ -136,8 +145,6 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
             mLogic.getSalariesFromDb(mRef);
 
         } else {
-
-            mRef = FirebaseDatabase.getInstance().getReference();
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
 
@@ -165,6 +172,8 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
             boolean isValid = mLogic.checkValidation(
                     salariesArrayLst.get(salariesSpinner.getSelectedItemPosition()).getId(),
                     positionsArrayLst.get(positionsSpinner.getSelectedItemPosition()).getId(),
+                    positionsArrayLst.get(positions2Spinner.getSelectedItemPosition()).getId(),
+                    positionsArrayLst.get(positions3Spinner.getSelectedItemPosition()).getId(),
                     mobileNbInputEdtTxt,
                     descriptionInputEdtTxt,
                     mRef,
@@ -221,9 +230,14 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         }
     }
 
-    private void loadUserPosition(String positionId) {
+    private void loadUserPosition() {
         int positionIndex = mLogic.getUserPositionIndex(positionId, positionsArrayLst);
+        int position2Index = mLogic.getUserPositionIndex(positionId2, positionsArrayLst);
+        int position3Index = mLogic.getUserPositionIndex(positionId3, positionsArrayLst);
+
         positionsSpinner.setSelection(positionIndex);
+        positions2Spinner.setSelection(position2Index);
+        positions3Spinner.setSelection(position3Index);
     }
 
     private void loadUserSalary(String salaryId) {
@@ -241,6 +255,9 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         Picasso.with(getApplicationContext()).load(userEmployee.getProfilePicture()).placeholder(R.drawable.user_placeholder).into(profilePicImgV);
 
         positionId = userEmployee.getPosition();
+        positionId2 = userEmployee.getPosition2();
+        positionId3 = userEmployee.getPosition3();
+
         salaryId = userEmployee.getSalary();
 
         mLogic.getPositionsFromDb(mRef);
@@ -256,8 +273,10 @@ public class HomeActivity extends AppCompatActivity implements IHomeFirebaseCall
         positionsNamesArrayLst = mLogic.getNames(positionsArrayLst);
         positionsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, positionsNamesArrayLst);
         positionsSpinner.setAdapter(positionsAdapter);
+        positions2Spinner.setAdapter(positionsAdapter);
+        positions3Spinner.setAdapter(positionsAdapter);
 
-        loadUserPosition(positionId);
+        loadUserPosition();
     }
 
     @Override

@@ -75,6 +75,7 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
 
     public void setListeners() {
         myFavSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            searchView.setQuery("", false);
             mIsLoadingFavourites = b;
             showProgressDialog();
             mLogic.getAllUsers(mRef, b, getApplicationContext());
@@ -121,6 +122,8 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
         i.putExtra("description", employee.getDescription());
         i.putExtra("salary", employee.getSalary());
         i.putExtra("position", employee.getPosition());
+        i.putExtra("position2", employee.getPosition2());
+        i.putExtra("position3", employee.getPosition3());
 
         startActivity(i);
 
@@ -145,6 +148,9 @@ public class EmployerHomeActivity extends AppCompatActivity implements IUsersAda
     @Override
     public void onGetAllUsersCallback(ArrayList<User> usersEmployeeArrayLst) {
         defaultUsersArrayLst = usersEmployeeArrayLst;
+
+        if(mIsLoadingFavourites && usersEmployeeArrayLst.size() == 0)
+            Toast.makeText(getApplicationContext(), "You did not add any favourite user to your archive", Toast.LENGTH_LONG).show();
 
         // setup the recycler view
         setUsersRecyclerViewAdapter(usersEmployeeArrayLst);
